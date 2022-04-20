@@ -8,6 +8,7 @@ import com.rest.shared.dto.UserDto;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,6 +19,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     Utils utils;
+
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public UserDto createUser(UserDto user) {
@@ -34,7 +38,7 @@ public class UserServiceImpl implements UserService {
         // Populating the required fields that aren't put in by the user
         userEntity.setUserId(utils.generateUserId(10));
 
-        userEntity.setEncryptedPassword("hardcodedPassword");
+        userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
         // saving info from userEntity to the database using the repo
         UserEntity storedUserDetails = userRepository.save(userEntity);
