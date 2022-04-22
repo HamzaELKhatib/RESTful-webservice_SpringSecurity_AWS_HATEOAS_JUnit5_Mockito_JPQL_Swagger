@@ -50,7 +50,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
             // 4. If the token is valid, we create a new UsernamePasswordAuthenticationToken object
             // and pass it to the SecurityContextHolder
             String user = Jwts.parser()
-                    .setSigningKey(SecurityConstants.TOKEN_SECRET)
+                    .setSigningKey(SecurityConstants.getTokenSecret())
                     // 5. Removing the "Bearer " prefix from the token
                     .parseClaimsJws(token.replace(SecurityConstants.TOKEN_PREFIX, ""))
                     .getBody()

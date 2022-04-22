@@ -23,9 +23,6 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        // This will stop spring security from using cookies and every request needs to be authenticated
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
         http.csrf().disable().authorizeRequests()
                 // We're permitting all post requests to the path "/users"
                 .antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL).permitAll()
@@ -39,6 +36,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .and().addFilter(getAuthenticationFilter())
                 // We're calling the getAuthorizationFilter() method that we just created in this class to get the custom filter.
                 .addFilter( new AuthorizationFilter(authenticationManager()))
+                // This will stop spring security from using cookies and every request needs to be authenticated
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         ;
     }
 

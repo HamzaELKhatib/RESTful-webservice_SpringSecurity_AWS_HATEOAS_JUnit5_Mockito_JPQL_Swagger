@@ -65,7 +65,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 // 6. Setting the expiration date of the token by setting the expiration date to be SecurityConstants.EXPIRATION_TIME(10 days) after the current time
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
                 // 7. Sign the token with the HS512 algorithm using the secret key we created in SecurityConstants
-                .signWith(SignatureAlgorithm.HS512, SecurityConstants.TOKEN_SECRET)
+                .signWith(SignatureAlgorithm.HS512, SecurityConstants.getTokenSecret())
                 // 8. Build the token
                 .compact()
                 ;
