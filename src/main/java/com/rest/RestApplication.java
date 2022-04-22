@@ -16,4 +16,10 @@ public class RestApplication {
 	public BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+
+	// This is needed to access the beans in the application context from the AuthenticationFilter class and other classes that need it.
+	@Bean
+	public SpringApplicationContext springApplicationContext() {
+		return new SpringApplicationContext();
+	}
 }

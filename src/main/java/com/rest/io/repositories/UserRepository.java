@@ -1,4 +1,4 @@
-package com.rest;
+package com.rest.io.repositories;
 
 import com.rest.io.entity.UserEntity;
 import org.springframework.data.repository.CrudRepository;

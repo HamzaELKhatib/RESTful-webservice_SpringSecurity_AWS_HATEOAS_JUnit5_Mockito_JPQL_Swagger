@@ -1,6 +1,6 @@
 package com.rest.service.impl;
 
-import com.rest.UserRepository;
+import com.rest.io.repositories.UserRepository;
 import com.rest.io.entity.UserEntity;
 import com.rest.service.UserService;
 import com.rest.shared.Utils;
@@ -58,6 +58,19 @@ public class UserServiceImpl implements UserService {
         // Returning the dto
         return returnValue;
 
+    }
+
+    @Override
+    public UserDto getUser(String email) {
+
+        UserEntity userEntity = userRepository.findByEmail(email);
+
+        if (userEntity == null) throw new UsernameNotFoundException("User not found");
+
+        UserDto returnValue = new UserDto();
+        BeanUtils.copyProperties(userEntity, returnValue);
+
+        return returnValue;
     }
 
 

@@ -15,9 +15,9 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping(path = "/{name}") //Front requesting from backend
-    public String getUser(@PathVariable String name){
-        return "Hello " + name;
+    @GetMapping //Front requesting from backend
+    public String getUser(){
+        return "Hello, get user called";
     }
 
     // @RequestBody allows createUser to read the body from the http request and convert that body to a java object

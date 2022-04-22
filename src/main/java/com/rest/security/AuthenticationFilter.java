@@ -1,7 +1,11 @@
 package com.rest.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rest.SpringApplicationContext;
 import com.rest.presentationlayer.model.request.UserLoginRequestModel;
+import com.rest.service.UserService;
+import com.rest.service.impl.UserServiceImpl;
+import com.rest.shared.dto.UserDto;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -66,8 +70,17 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .compact()
                 ;
 
-        // 9. Add the token to the response header(Authorization)
+        // Adding UserServiceImpl to the SpringApplicationContext so that we can use it in this class
+        UserService userService = (UserService) SpringApplicationContext.getBean("userServiceImpl");
+
+        // 9. Get the user details from the database using getUser() method of UserServiceImpl (this is why we added UserServiceImpl to the SpringApplicationContext)
+        UserDto userDto = userService.getUser(userName);
+
+        // 10. Add the token to the response header(Authorization)
         res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
+
+        // 11. Add the user details to the response body
+        res.addHeader("UserID", userDto.getUserId());
     }
 
 }
