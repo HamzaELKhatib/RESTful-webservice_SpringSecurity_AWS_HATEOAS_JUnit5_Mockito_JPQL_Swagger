@@ -24,9 +24,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable().authorizeRequests()
                 // We're permitting all post requests to the path "/users"
-                .antMatchers(HttpMethod.POST, "/users").permitAll()
+                .antMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL).permitAll()
                 // We're requiring all other requests to be authenticated
-                .anyRequest().authenticated();
+                .anyRequest().authenticated()
+                // This will implement a custom authentication filter which is the JWT filter we created in the AuthenticationFilter class.
+                .and().addFilter(new AuthenticationFilter(authenticationManager()))
+        ;
     }
 
     @Override
