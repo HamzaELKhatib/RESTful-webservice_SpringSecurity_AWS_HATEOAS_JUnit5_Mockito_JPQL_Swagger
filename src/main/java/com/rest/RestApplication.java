@@ -1,5 +1,6 @@
 package com.rest;
 
+import com.rest.security.AppProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -21,5 +22,11 @@ public class RestApplication {
 	@Bean
 	public SpringApplicationContext springApplicationContext() {
 		return new SpringApplicationContext();
+	}
+
+	// This is required to access the beans in the application context from the AppProperties class.
+	@Bean(name = "AppProperties")
+	public AppProperties appProperties() {
+		return new AppProperties();
 	}
 }
