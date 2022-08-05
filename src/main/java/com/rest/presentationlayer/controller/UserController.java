@@ -1,11 +1,14 @@
 package com.rest.presentationlayer.controller;
 
+import com.rest.exceptions.UserServiceException;
 import com.rest.presentationlayer.model.request.UserDetailsRequestModel;
+import com.rest.presentationlayer.model.response.ErrorMessages;
 import com.rest.presentationlayer.model.response.UserRest;
 import com.rest.service.UserService;
 import com.rest.shared.dto.UserDto;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,20 +18,35 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping //Front requesting from backend
-    public String getUser(){
-        return "Hello, get user called";
+    //Front requesting from backend
+    // "produces" manages the response type
+    @GetMapping(path = "/{id}", produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE}) // http://localhost:8080/users/{id}
+    public UserRest getUser(@PathVariable String id) {
+
+        UserRest returnValue = new UserRest();
+
+        UserDto userDto = userService.getUserByUserId(id);
+
+        BeanUtils.copyProperties(userDto, returnValue);
+
+        return returnValue;
     }
 
     // @RequestBody allows createUser to read the body from the http request and convert that body to a java object
     // UserDetailsRequestModel is the class we're using to create a java object out of this body
     // UserDetailsRequestModel will have fields that match the request body
     // UserRest will be used a response model class
-    @PostMapping //sending to the backend
-    public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails){
+    //sending to the backend
+    // "consumes" manages the request type, produces manages the response type
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public UserRest createUser(@RequestBody UserDetailsRequestModel userDetails) {
 
         // The information to be returned
         UserRest returnValue = new UserRest();
+
+        // Custom exception to be thrown if the first name is not provided
+        if(userDetails.getFirstName().isEmpty()) throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
+
 
         UserDto userDto = new UserDto();
 
@@ -47,12 +65,12 @@ public class UserController {
     }
 
     @PutMapping //sending/updating
-    public void updateUser(){
+    public void updateUser() {
         return;
     }
 
     @DeleteMapping //delete
-    public void deleteUser(){
+    public void deleteUser() {
         return;
     }
 }
