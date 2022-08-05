@@ -2,6 +2,7 @@ package com.rest.service.impl;
 
 import com.rest.io.repositories.UserRepository;
 import com.rest.io.entity.UserEntity;
+import com.rest.presentationlayer.model.response.ErrorMessages;
 import com.rest.service.UserService;
 import com.rest.shared.Utils;
 import com.rest.shared.dto.UserDto;
@@ -61,6 +62,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto updateUser(String id, UserDto user) {
+
+        UserDto returnValue = new UserDto();
+
+        UserEntity userEntity = userRepository.findByUserId(id);
+
+        if (userEntity == null) throw new UsernameNotFoundException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage() + "id = " + id);
+
+        userEntity.setFirstName(user.getFirstName());
+        userEntity.setLastName(user.getLastName());
+
+        UserEntity updatedUser = userRepository.save(userEntity);
+
+        BeanUtils.copyProperties(updatedUser, returnValue);
+
+        return returnValue;
+    }
+
+    @Override
     public UserDto getUser(String email) {
 
         UserEntity userEntity = userRepository.findByEmail(email);
@@ -86,6 +106,16 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userEntity, returnValue);
 
         return returnValue;
+    }
+
+    @Override
+    public void deleteUser(String id) {
+
+        UserEntity userEntity = userRepository.findByUserId(id);
+
+        if(userEntity == null) throw new UsernameNotFoundException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
+
+        userRepository.delete(userEntity);
     }
 
 
