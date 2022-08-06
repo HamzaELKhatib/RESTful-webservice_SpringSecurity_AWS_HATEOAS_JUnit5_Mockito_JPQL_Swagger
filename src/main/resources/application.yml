@@ -9,3 +9,6 @@ spring:
             ddl-auto: update
         show-sql: true
 tokenSecret: jh5gt6dc5g41b9ju3s47
+server:
+    servlet:
+      context-path: /restful-course
