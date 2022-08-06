@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("users") // http://localhost:8080/users
 public class UserController {
@@ -19,7 +22,8 @@ public class UserController {
 
     //Front requesting from backend
     // "produces" manages the response type
-    @GetMapping(path = "/{id}", produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE}) // http://localhost:8080/users/{id}
+    @GetMapping(path = "/{id}", produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    // http://localhost:8080/users/{id}
     public UserRest getUser(@PathVariable String id) {
 
         UserRest returnValue = new UserRest();
@@ -44,7 +48,8 @@ public class UserController {
         UserRest returnValue = new UserRest();
 
         // Custom exception to be thrown if the first name is not provided
-        if(userDetails.getFirstName().isEmpty()) throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
+        if (userDetails.getFirstName().isEmpty())
+            throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
 
 
         UserDto userDto = new UserDto();
@@ -63,14 +68,16 @@ public class UserController {
         return returnValue;
     }
 
-    @PutMapping(path = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}) //sending/updating
+    @PutMapping(path = "/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    //sending/updating
     public UserRest updateUser(@RequestBody UserDetailsRequestModel userDetails, @PathVariable String id) {
 
         // The information to be returned
         UserRest returnValue = new UserRest();
 
         // Custom exception to be thrown if the first name is not provided
-        if(userDetails.getFirstName().isEmpty()) throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
+        if (userDetails.getFirstName().isEmpty())
+            throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
 
 
         UserDto userDto = new UserDto();
@@ -98,6 +105,22 @@ public class UserController {
 
         returnValue.setOperationName(RequestOperationName.DELETE.name());
         returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
+
+        return returnValue;
+    }
+
+    @GetMapping(produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public List<UserRest> getUsers(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "limit", defaultValue = "25") int limit) {
+
+        List<UserRest> returnValue = new ArrayList<>();
+
+        List<UserDto> users = userService.getUsers(page, limit);
+
+        for (UserDto userDto : users) {
+            UserRest user = new UserRest();
+            BeanUtils.copyProperties(userDto, user);
+            returnValue.add(user);
+        }
 
         return returnValue;
     }
